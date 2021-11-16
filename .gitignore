@@ -15,4 +15,4 @@
 # vendor/
 
 *.env
-resources/*
+resources/host_dd.csv
