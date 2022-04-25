@@ -9,19 +9,23 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
 
 func init() {
-	log.SetFormatter(&log.JSONFormatter{})
+	//log.SetFormatter(&log.JSONFormatter{})
 	log.SetLevel(log.DebugLevel)
 	godotenv.Load(".env")
 
 }
 func buildFile(data []domains.Corporate_tags) {
-	csvFile, err := os.Create("resources/host_dd.csv")
+	currentTime := time.Now()
+	extension := ".csv"
+	fileName := "resources/host_" + currentTime.Format("01-02-2006") + extension
+	csvFile, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("failed creating file: %s", err)
 	}
@@ -67,7 +71,7 @@ func invokeDataDog(from int, limit int) domains.Response {
 
 	url := fmt.Sprintf(os.Getenv("URL_PATH"), from, limit)
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
+	req, _ := http.NewRequest("GET", url, nil)
 
 	req.Header.Add("DD-API-KEY", os.Getenv("DD_API_KEY"))
 	req.Header.Add("DD-APPLICATION-KEY", os.Getenv("DD_APPLICATION_KEY"))
